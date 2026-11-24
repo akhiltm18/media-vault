@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediaVault - Store Your Photos & Videos</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Drag & Drop Fullscreen Overlay -->
+    <div id="drop-zone-overlay" class="drop-overlay hidden">
+        <div class="drop-content">
+            <div class="drop-icon">📁</div>
+            <h2>Drop your photos and videos here</h2>
+            <p>Release to instantly upload to your vault</p>
+        </div>
+    </div>
+
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <div class="brand-logo">
+                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="4"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <path d="M21 15l-5-5L5 21"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>MediaVault</h1>
+                    <span class="brand-tag">Personal Cloud Storage</span>
+                </div>
+            </div>
+
+            <!-- Header Stats -->
+            <div class="header-stats" id="header-stats">
+                <span class="stat-pill" id="stat-total">0 items</span>
+                <span class="stat-pill" id="stat-storage">0 MB used</span>
+            </div>
+
+            <!-- Upload Action -->
+            <div class="header-actions">
+                <input type="file" id="file-input" multiple accept="image/*,video/*" class="file-input-hidden">
+                <button id="upload-btn" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <span>Upload Files</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Control Bar: Tabs, Search, Sort -->
+        <section class="controls-bar">
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="tab-btn active" data-filter="all">
+                    <span class="tab-icon">🗂️</span> All
+                    <span class="tab-count" id="count-all">0</span>
+                </button>
+                <button class="tab-btn" data-filter="photo">
+                    <span class="tab-icon">🖼️</span> Photos
+                    <span class="tab-count" id="count-photos">0</span>
+                </button>
+                <button class="tab-btn" data-filter="video">
+                    <span class="tab-icon">🎬</span> Videos
+                    <span class="tab-count" id="count-videos">0</span>
+                </button>
+                <button class="tab-btn" data-filter="favorite">
+                    <span class="tab-icon">⭐</span> Favorites
+                    <span class="tab-count" id="count-favs">0</span>
+                </button>
+            </div>
+
+            <!-- Search & Sort Controls -->
+            <div class="search-sort-group">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" id="search-input" placeholder="Search by name...">
+                    <button id="search-clear" class="btn-clear hidden">&times;</button>
+                </div>
+
+                <div class="sort-box">
+                    <label for="sort-select">Sort:</label>
+                    <select id="sort-select">
+                        <option value="newest">Newest Added</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="size_desc">Largest Size</option>
+                        <option value="name_asc">Name (A-Z)</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Uploading Progress Panel (Collapsible/Floating) -->
+        <div id="upload-progress-card" class="upload-progress-card hidden">
+            <div class="progress-header">
+                <span class="progress-title" id="progress-text">Uploading files...</span>
+                <span class="progress-percent" id="progress-percent">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Media Grid Container -->
+        <div class="gallery-wrapper">
+            <div id="media-grid" class="media-grid">
+                <!-- Media cards injected dynamically via JavaScript -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state hidden">
+                <div class="empty-illustration">
+                    <svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="3" width="20" height="14" rx="2"/>
+                        <circle cx="8" cy="8" r="2"/>
+                        <path d="M22 13l-4.5-4.5L7 19"/>
+                        <line x1="2" y1="21" x2="22" y2="21"/>
+                    </svg>
+                </div>
+                <h3 id="empty-title">Your vault is currently empty</h3>
+                <p id="empty-subtitle">Upload your favorite photos and videos using the button above or drag and drop files here.</p>
+                <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">
+                    Browse Files
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Fullscreen Media Modal / Lightbox -->
+    <div id="media-modal" class="modal-overlay hidden" tabindex="-1">
+        <div class="modal-container">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <div class="modal-file-info">
+                    <span class="modal-type-badge" id="modal-type-badge">PHOTO</span>
+                    <span class="modal-filename" id="modal-filename">File Name.jpg</span>
+                    <span class="modal-filemeta" id="modal-filemeta">1.2 MB • Oct 14, 2026</span>
+                </div>
+                <div class="modal-actions">
+                    <button class="modal-btn" id="modal-fav-btn" title="Toggle Favorite">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                    </button>
+                    <a class="modal-btn" id="modal-download-btn" title="Download" download>
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                    </a>
+                    <button class="modal-btn" id="modal-copy-btn" title="Copy Direct URL">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                        </svg>
+                    </button>
+                    <button class="modal-btn btn-danger" id="modal-delete-btn" title="Delete">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                    </button>
+                    <button class="modal-btn btn-close" id="modal-close-btn" title="Close (Esc)">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Content (Image or Video) -->
+            <div class="modal-body">
+                <button class="nav-btn prev-btn" id="modal-prev-btn" title="Previous (←)">&#10094;</button>
+                
+                <div class="media-display-wrapper">
+                    <img id="modal-image" class="modal-image hidden" alt="Expanded view">
+                    <video id="modal-video" class="modal-video hidden" controls playsinline preload="metadata">
+                        Your browser does not support HTML5 video.
+                    </video>
+                </div>
+
+                <button class="nav-btn next-btn" id="modal-next-btn" title="Next (→)">&#10095;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
